@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\AnnouncementCreated;
+use App\Listeners\SendAnnouncementEmailNotification;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\Event::listen(
+            AnnouncementCreated::class,
+            SendAnnouncementEmailNotification::class,
+        );
     }
 }
