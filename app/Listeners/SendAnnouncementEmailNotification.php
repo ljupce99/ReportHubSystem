@@ -14,6 +14,16 @@ class SendAnnouncementEmailNotification implements ShouldQueue
     use InteractsWithQueue;
 
     /**
+     * The number of seconds to wait before retrying the job.
+     */
+    public int $retryAfter = 3600;
+
+    /**
+     * The number of times the job may be attempted.
+     */
+    public int $tries = 3;
+
+    /**
      * Handle the event.
      */
     public function handle(AnnouncementCreated $event): void
@@ -21,8 +31,10 @@ class SendAnnouncementEmailNotification implements ShouldQueue
         $announcement = $event->announcement;
         $recipients = $this->getRecipients($announcement);
 
+        // Send emails without queue to avoid duplicates
         foreach ($recipients as $recipient) {
-            Mail::to($recipient->email)->send(new AnnouncementNotification($announcement));
+            Mail::to($recipient->email)
+                ->send(new AnnouncementNotification($announcement));
         }
     }
 

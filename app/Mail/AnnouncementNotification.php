@@ -27,7 +27,13 @@ class AnnouncementNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: config('mail.from.address'),
+            replyTo: [config('mail.from.address')],
             subject: 'New Announcement: ' . $this->announcement->title,
+            tags: ['announcement'],
+            metadata: [
+                'announcement_id' => $this->announcement->id,
+            ],
         );
     }
 
