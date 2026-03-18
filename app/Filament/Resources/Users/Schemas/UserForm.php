@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use App\Enums\UserRolesEnum;
+use App\Models\Category;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -25,6 +26,7 @@ class UserForm
 
             TextInput::make('password')
                 ->password()
+                ->revealable()
                 ->dehydrateStateUsing(fn($state) => \Illuminate\Support\Facades\Hash::make($state))
                 ->dehydrated(fn($state) => filled($state))
                 ->required(fn(string $operation) => $operation === 'create')
@@ -37,8 +39,10 @@ class UserForm
                 ->default('employee')
                 ->required(),
 
-            TextInput::make('department')
-                ->maxLength(100),
+            Select::make('department')
+                ->label('Department')
+                ->options(fn() => Category::where('is_active', true)->pluck('name', 'name'))
+                ->placeholder('Select a department'),
 
             Toggle::make('is_active')
                 ->default(true)

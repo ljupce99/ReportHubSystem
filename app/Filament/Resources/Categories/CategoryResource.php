@@ -22,7 +22,7 @@ class CategoryResource extends Resource
 
     public static function getNavigationGroup(): string
     {
-        return 'Communications';
+        return 'Departments';
     }
 
     public static function getNavigationSort(): ?int
