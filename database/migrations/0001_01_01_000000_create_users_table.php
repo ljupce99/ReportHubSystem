@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,16 +15,16 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-
-            // enum
-            $table->enum('role', ['admin', 'hr', 'manager', 'employee'])->default('employee');
-
+            $table->string('role', 20)->default('employee');
             $table->string('department')->nullable();
             $table->boolean('is_active')->default(true);
-
             $table->rememberToken();
             $table->timestamps();
         });
+
+        if (Schema::getConnection()->getDriverName() === 'pgsql') {
+            DB::statement("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('admin', 'hr', 'manager', 'employee'))");
+        }
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
